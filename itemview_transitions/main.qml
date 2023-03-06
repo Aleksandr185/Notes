@@ -91,27 +91,27 @@ Window {
 //            centersModel.clear()
 //            centersModel.append( { "latitude": crd.latitude, "longitude": crd.longitude } )
             var crd = map.visibleRegion
-            console.log("center changed: " + crd.boundingGeoRectangle())
+            //console.log("center changed: " + crd.boundingGeoRectangle())
         }
 
         onZoomLevelChanged: {
             var crd = map.visibleRegion
-            console.log("zoom changed: " + crd.boundingGeoRectangle())
+            //console.log("zoom changed: " + crd.boundingGeoRectangle())
         }
 
         onWidthChanged: {
             var crd = map.center
-            console.log("width changed: " + crd)
+            //console.log("width changed: " + crd)
         }
 
         onVisibleRegionChanged: {
             var crd = map.visibleRegion
-            console.log("Region changed: " + crd.boundingGeoRectangle())
+            //console.log("Region changed: " + crd.boundingGeoRectangle())
         }
 
         onHeightChanged: {
             var crd = map.center
-            console.log("height changed: " + crd)
+            //console.log("height changed: " + crd)
         }
 
         Text {
@@ -129,11 +129,9 @@ Window {
             anchors.fill: parent
             onPressAndHold: {
                 var crd = map.toCoordinate(Qt.point(mouseX, mouseY))
-                console.log("new point: " + crd)
                 //markerModel.clear()
                 markerModel.append({ "latitude": crd.latitude, "longitude": crd.longitude})
                 //pathItem.addCoordinate(crd)
-                console.log(pathModel.objectName)
             }
         }
 
@@ -141,9 +139,15 @@ Window {
             model: pathModel
             delegate: MapPolyline {
                 id: pathItem
+                objectName: "pathItemName"
                 line.width: 2
                 line.color: "green"
-                path: model.path
+                //path: model.path.path
+            }
+
+            onItemAdded: {
+                item.path = model.get(index).path
+                console.log("onItemAdded: index of: " + index + ". " +  item.path[0] + ", " + model.get(index).width)
             }
         }
 

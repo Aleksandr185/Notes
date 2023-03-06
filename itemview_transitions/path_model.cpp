@@ -1,5 +1,7 @@
 #include "path_model.h"
 
+#include <QDebug>
+
 PathModel::PathModel()
 {
   {
@@ -36,12 +38,14 @@ int PathModel::rowCount(const QModelIndex &parent) const
 
 QVariant PathModel::data(const QModelIndex& index, int role) const
 {
+  qDebug() << "get role: " << roleNames().value(role);
+
   if (!index.isValid())
     return QVariant();
 
   switch (role) {
   case Qt::UserRole: {
-      return QVariant::fromValue(_data.at(index.row()).path());
+      return QVariant::fromValue(_data.at(index.row())/*.path()*/);
     break;
     }
   case Qt::UserRole + 1:
@@ -53,6 +57,7 @@ QVariant PathModel::data(const QModelIndex& index, int role) const
     break;
   }
 
+  //qDebug() << "get role: " << role;
   return QVariant();
 }
 
@@ -62,4 +67,9 @@ QHash<int, QByteArray> PathModel::roleNames() const
   result.insert(Qt::UserRole, "path");
   result.insert(Qt::UserRole + 1, "text");
   return result;
+}
+
+QGeoPath PathModel::get(int index) const
+{
+  return _data.at(index);
 }
