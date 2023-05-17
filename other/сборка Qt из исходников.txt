@@ -1,0 +1,116 @@
+ -- Qt 5.x.x
+ 
+-- 1. Подготовить environment 
+ ------------------------------------------------------------------------------------------
+		echo Setting up environment for mingw 12.1.0_32bit usage...
+
+		REM MinGW
+		set PATH=C:\Qt\Tools\mingw1210_32\bin;%PATH%
+
+		REM CMake
+		REM set PATH=C:\Qt\Tools\CMake_64\bin;%PATH%
+
+		REM Pyton
+		set PATH=C:\Users\aleksandr\AppData\Local\Programs\Python\Python310\;%PATH%
+
+		REM Perl
+		set PATH=C:\Program Files\Git\usr\bin;%PATH%
+
+		REM Clang (for QDoc)
+		set PATH=C:\Qt\Tools\libclang\bin;%PATH%
+
+		REM Ninja
+		REM set PATH=C:\Qt\Tools\Ninja;%PATH%
+
+		REM QMake
+		REM set PATH=C:\Qt\5.15.2\mingw81_32\bin;%PATH%
+
+		REM Qt src
+		set _ROOT=Q:\Qt\src\5.15\qt5\qtbase\bin
+		set PATH=%_ROOT%;%PATH%
+		set _ROOT=
+
+
+		echo -------------------- MinGW version -------------------------
+		mingw32-make.exe --version
+		echo --------------------- gcc version --------------------------
+		gcc.exe --version
+		echo --------------------- g++ version --------------------------
+		g++.exe --version
+		echo -------------------- cmake version -------------------------
+		cmake.exe --version
+		echo ------------------- python version -------------------------
+		python.exe --version
+		echo --------------------- git version --------------------------
+		git.exe --version
+		echo -------------------- perl version --------------------------
+		perl.exe --version
+		echo -------------------- clang version -------------------------
+		clang.exe --version
+		echo -------------------- Ninja version -------------------------
+		ninja.exe --version
+		echo ------------------------------------------------------------
+
+		cd /D Q:\Qt\build\5.15\
+------------------------------------------------------------------------------------------
+
+где _ROOT = каталог с исходниками
+    cd /D Q:\Qt\build\5.15\ = каталог для makefile, objective files и т.д. (как можно короче)
+	
+-- 2. Запуск configure
+	
+
+..\..\src\5.15\qt5\configure.bat -prefix Q:\Qt\5.15.5\mingw1120_32 -platform win32-g++ -debug-and-release -qt-zlib -qt-libpng -qt-libjpeg -qt-freetype -opensource -confirm-license -opengl dynamic -nomake examples -nomake tests -no-feature-d3d12 -I C:\Qt\Tools\LLVM\include -L C:\Qt\Tools\LLVM\lib -I "C:\Program Files (x86)\MySQL\MySQL Server 5.7\include" -L "C:\Program Files (x86)\MySQL\MySQL Server 5.7\lib"
+
+
+-- For 64x
+..\..\src\5.15\qt5\configure.bat -prefix Q:\Qt\5.15.5\mingw1120_64 -platform win32-g++ -debug-and-release -qt-zlib -qt-libpng -qt-libjpeg -qt-freetype -opensource -confirm-license -opengl desktop -nomake examples -nomake tests -no-feature-d3d12 -skip qtmultimedia -I C:\Qt\Tools\LLVM\64x\include -L C:\Qt\Tools\LLVM\64x\lib -I "Q:\Qt\tools\mysql-connector-c\6.1.6\win64\include" -L "Q:\Qt\tools\mysql-connector-c\6.1.6\win64\lib"
+
+
+-release — указываем, что собирать будем только Release версию (если нужен и debug, то меняем на -debug);
+-opensource -confirm-license — соглашаемся с лицензией;
+-opengl desktop сборка для «настольников»;
+-no-angle — «позволит избавится от libEGL, libGLES», спасибо Taraflex: Toster;
+-platform win32-g++ — целевая платформа (список платформ: qt5\qtbase\mkspecs );
+-qt-zlib -qt-pcre -qt-libpng -qt-libjpeg -qt-freetype — плюшки;
+-no-openssl — отключаем ssl;
+-make libs — это нам пригодится для сборки dll-библиотеки;
+-make tools — утилиты assistant, designer и linguist. Если не нужно, замени на -nomake tools;
+-nomake examples -nomake tests — примеры и тесты. Собираются о-о-о-о-чень долго, так что лучше не включать;
+-prefix %QTPREFIX% — указываем, куда будет установлена будущая сборка.
+
+если нужны еще какие-то модули, например, sqlite, то читай README или воспользуся командой configure -help, чтобы узнать какой параметр нужно добавить к конфигуратору.
+
+!!! Если при выполнении команды появится ошибка '"nmake" не является исполняемым файлом' значит не указан -platform win32-g++
+
+Перед повторным выполнении команды configure удали файл config.cache из каталога _ROOT
+
+-- 3. Сборка
+  mingw32-make -j 8
+  
+  где -j 8 - количество потоков
+  
+-- 4. Установка
+
+  mingw32-make install
+  
+  будут скопированы все файлы библиотек в каталог -prefix, нужно будет добавить файлы библиотек MinGW
+  
+-- 5. Сборка документации
+
+  mingw32-make docs
+  
+  или для отдельного модуля
+  
+  cd qtbase/src/sql
+  mingw32-make docs            # builds only the Qt SQL documentation
+  
+-- 6. Установка документации
+
+  QT_INSTALL_DOCS
+
+  mingw32-make install_docs
+  
+  Установка выполняется в каталог -prefix/doc
+ 
+ -- Qt 6.x.x

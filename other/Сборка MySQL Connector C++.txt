@@ -1,0 +1,47 @@
+
+// файл 'qtenv2.bat'
+@echo off
+echo Setting up environment for Qt 6 usage...
+SET _ROOT=C:\Qt\6.2.2\Src
+set PATH=%_ROOT%\qtbase\bin;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw900_64\bin;C:\Users\aleksandr\AppData\Local\Programs\Python\Python310\;C:\Program Files\Git\usr\bin;C:\Qt\Tools\libclang\bin;%PATH%
+
+
+cd /D D:\temp\mysql
+
+// ---------------------------
+
+// Запуск файла 'qtenv2.bat'
+
+C:\Windows\System32\cmd.exe /A /Q /K D:\temp\qtenv2.bat
+
+1) Перейти в каталог исходников MySQL Connector
+
+2) Установи библиотеку OpenSSL с помощью установщика Qt
+
+3) Создай отдельный каталог для сборки, например '<source_dir>/build'
+   И сделай его текущим
+
+4) выполни
+
+    -- Для 32x
+	cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=release -DWITH_SSL=C:\Qt\Tools\OpenSSL\Win_x86
+	
+    -- Для 64x
+	cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=release -DWITH_SSL=C:\Qt\Tools\OpenSSL\Win_x64
+	
+	cmake --build . --parallel 8
+	
+5) Если будет ошибка:
+
+gcc.exe: warning: /wd4152: linker input file unused because linking not done
+gcc.exe: error: /wd4152: linker input file not found: No such file or directory
+gcc.exe: warning: /wd4996: linker input file unused because linking not done
+gcc.exe: error: /wd4996: linker input file not found: No such file or directory
+mingw32-make.exe[2]: *** [cdk\CMakeFiles\openssl-applink.dir\build.make:76: cdk/CMakeFiles/openssl-applink.dir/C_/Qt/Tools/OpenSSL/Win_x64/include/openssl/applink.c.obj] Error 1
+mingw32-make.exe[2]: *** Deleting file 'cdk/CMakeFiles/openssl-applink.dir/C_/Qt/Tools/OpenSSL/Win_x64/include/openssl/applink.c.obj'
+mingw32-make.exe[1]: *** [CMakeFiles\Makefile2:837: cdk/CMakeFiles/openssl-applink.dir/all] Error 2
+mingw32-make.exe: *** [Makefile:135: all] Error 2
+
+ то в каталоге "C:\Qt\Tools\OpenSSL\Win_x64\include\openssl" переименуй файл "applink.c" -> "_applink.c"
+ он нужен только Visual Studio.
+ Очисти каталог build, и повтори пункт 4

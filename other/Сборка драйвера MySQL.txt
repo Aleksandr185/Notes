@@ -1,0 +1,63 @@
+﻿Сборка драйвера MySQL
+
+// Перед повторной сборкой, или сборкой под другую архитектуру выполни "mingw32-make sub-mysql-clean"
+
+1) Консоль с настроенным enviroment
+Пуск -> Все программы -> Qt -> "<версия Qt>" -> Qt 5.14.0 (MinGW 7.3.0 64-bit)
+
+2) Перейти в каталог
+cd /D "D:\Qt\5.14.0\Src\qtbase\src\plugins\sqldrivers"
+
+3) Выполнить команду (если перед этим была неудачная попытка, удалить файл config.cache
+   в каталоге "\..\Src\qtbase\src\plugins\sqldrivers"
+   
+qmake -- MYSQL_INCDIR="D:\Qt\Projects\MySQL\MySQL Connector C 6.1_64bit\include" MYSQL_LIBDIR="D:\Qt\Projects\MySQL\MySQL Connector C 6.1_64bit\lib"
+qmake -- MYSQL_INCDIR="D:\temp\mysql-connector-c-6.1.6-winx64\include" MYSQL_LIBDIR="D:\temp\mysql-connector-c-6.1.6-winx64\lib"
+
+
+qmake -- MYSQL_INCDIR="D:\Qt\Projects\MySQL\MySQL Connector C 6.1_32bit\include" MYSQL_LIBDIR="D:\Qt\Projects\MySQL\MySQL Connector C 6.1_32bit\lib"
+qmake -- MYSQL_INCDIR="D:\temp\mysql-connector-c-6.1.6-win32\include" MYSQL_LIBDIR="D:\temp\mysql-connector-c-6.1.6-win32\lib"
+
+qmake -- -DMYSQL_INCLUDE_DIR="D:\temp\mysql-connector\mysql-connector-c-6.1.6-winx64\include" -DMYSQL_LIBRARY="D:\temp\mysql-connector\mysql-connector-c-6.1.6-winx64\lib"
+
+mingw32-make -j 8
+
+4) Сборка
+  mingw32-make sub-mysql
+
+5) Копирование драйвера (файл qsqlmysql.dll) в каталог D:\Qt\5.14.0\mingw73_64\plugins\sqldrivers\
+   mingw32-make.exe sub-mysql-install_subtargets
+
+6) Скопировать вручную файл libmysql.dll из \..\MySQL Connector C 6.1_32bit\lib в D:\Qt\5.14.0\mingw73_64\bin
+
+
+
+ // Сборка для Qt6
+ 
+ 0) Добавь путь к Ninja, Python, CMake в файле C:\Qt\6.2.2\mingw_64\bin\qtenv2.bat
+ 
+ set PATH=C:\Qt\6.2.2\mingw_64\bin;C:\Qt\Tools\mingw900_64\bin;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\Ninja;C:\Users\aleksandr\AppData\Local\Programs\Python\Python310\;C:\Program Files\Git\usr\bin;C:\Qt\Tools\libclang\bin;%PATH%
+ 
+ 1) создай каталог build-sqldrivers в C:\Qt\6.2.2\
+ 
+	mkdir build-sqldrivers
+	cd build-sqldrivers
+	
+ 
+	
+ 2) Выполни след команду
+  
+	qt-cmake -G Ninja C:/Qt/6.2.2/Src/qtbase/src/plugins/sqldrivers -DCMAKE_INSTALL_PREFIX=C:\Qt\6.2.2\mingw_64 -DMySQL_INCLUDE_DIR="D:\temp\mysql-connector\mysql-connector-c-6.1.6-winx64\include" -DMySQL_LIBRARY="D:\temp\mysql-connector\mysql-connector-c-6.1.6-winx64\lib\libmysql.lib"
+	
+  3)
+  
+   cmake --build .
+   
+  4) 
+  
+    cmake --install .
+	
+  5) Скопировать вручную файл libmysql.dll из \..\MySQL Connector C 6.1_xxbit\lib в D:\Qt\6.2.2\mingw_64\bin
+  
+  
+  // 
