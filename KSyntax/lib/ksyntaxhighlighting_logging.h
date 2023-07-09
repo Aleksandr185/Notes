@@ -1,0 +1,13 @@
+#ifndef KSYNTAXHIGHLIGHTING_LOGGING_H
+#define KSYNTAXHIGHLIGHTING_LOGGING_H
+
+#include <QLoggingCategory>
+
+namespace KSyntaxHighlighting
+{
+
+
+}
+
+Q_DECLARE_LOGGING_CATEGORY(Log)
+#endif // KSYNTAXHIGHLIGHTING_LOGGING_H
